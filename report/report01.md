@@ -78,4 +78,5 @@ _Các vấn đề gặp phải và cách giải quyết:_
 - [ ] **CHƯA ĐẠT** – Cần sửa các mục: ___________
 
 ---
-_Cập nhật lần cuối: ____________
+
+*Cập nhật lần cuối: ___________*

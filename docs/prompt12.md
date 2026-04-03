@@ -309,6 +309,7 @@ Sau khi hoàn thành audit, bạn PHẢI:
 2. **0 bug Critical** và **0 bug High** mở
 3. **Báo cáo** theo đúng template 10 sections
 4. **Round-trip** tất cả 4 modules đều pass SHA-256 verification
-5. **Kết luận** rõ ràng: PASS hoặc FAIL + lý do
+5. **9/9 Integration tests** pass (E01-E09)
+6. **Kết luận** rõ ràng: PASS hoặc FAIL + lý do
 
 Chỉ báo **"HOÀN THÀNH"** khi toàn bộ checklist pass và có báo cáo hoàn chỉnh.

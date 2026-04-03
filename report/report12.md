@@ -15,6 +15,7 @@
 | 3 – Integration Test | ⏳ | |
 | 4 – Code Quality | ⏳ | |
 | 5 – UX Consistency | ⏳ | |
+| 6 – Performance Baseline | ⏳ | |
 | **TỔNG** | ⏳ | Critical: _/ High:_ / Medium: _/ Low:_ |
 
 ---
@@ -86,18 +87,17 @@
 
 ## 🔗 CHIỀU 3 – Integration Test
 
-| # | Test | Kết quả | Ghi chú |
-|---|------|---------|---------|
-| T01 | AES round-trip 10MB – hash match | ⏳ | |
-| T02 | AES round-trip 100MB – hash match | ⏳ | |
-| T03 | RSA round-trip 1MB – hash match | ⏳ | |
-| T04 | Hybrid round-trip 10MB | ⏳ | |
-| T05 | Hybrid round-trip 500MB | ⏳ | |
-| T06 | Signature + verify đúng | ⏳ | |
-| T07 | Tamper detection | ⏳ | |
-| T08 | Sai sender public key → ❌ chữ ký | ⏳ | |
-| T09 | Hybrid dùng key từ RSA page | ⏳ | |
-| T10 | AES vs RSA speed (RSA chậm ≥10x) | ⏳ | AES: _s / RSA:_s |
+| # | Kịch bản E2E | Kết quả | Ghi chú |
+|---|-------------|---------|---------|
+| E01 | AES encrypt+decrypt qua UI – hash match | ⏳ | |
+| E02 | AES round-trip 100MB – hash match | ⏳ | |
+| E03 | RSA keygen+encrypt+decrypt (≤5MB) | ⏳ | |
+| E04 | Hybrid round-trip 10MB | ⏳ | |
+| E05 | Hybrid round-trip 500MB | ⏳ | |
+| E06 | Signature sign+verify đúng | ⏳ | |
+| E07 | Tamper detection (sửa 1 byte → fail) | ⏳ | |
+| E08 | Cross-page key sharing (RSA → Hybrid) | ⏳ | |
+| E09 | Sai file type → Zod reject ngay | ⏳ | |
 
 ---
 
@@ -116,7 +116,7 @@
 
 ---
 
-## 🎨 CHIỀU 5 – UX Consistency
+## 💨 CHIỀU 5 – UX Consistency
 
 | Kiểm tra | Trạng thái | Ghi chú |
 |---------|-----------|---------|
@@ -130,6 +130,20 @@
 | Navbar highlight đúng trang active | ⏳ | |
 | Mobile responsive (375px) | ⏳ | |
 | 404 page tồn tại | ⏳ | |
+
+---
+
+## 📈 CHIỀU 6 – Performance Baseline
+
+| Kịch bản | Kích thước | Thời gian tối đa | Đo thực tế |
+|---------|-----------|-----------------|-----------|
+| AES encrypt | 10 MB | 5 giây | ___ giây |
+| AES encrypt | 100 MB | 15 giây | ___ giây |
+| AES encrypt | 1 GB | 60 giây | ___ giây |
+| RSA encrypt | 5 MB | 120 giây | ___ giây |
+| Hybrid encrypt | 100 MB | 15 giây | ___ giây |
+| Signature sign+enc | 100 MB | 20 giây | ___ giây |
+| SHA-256 hash | 1 GB | 10 giây | ___ giây |
 
 ---
 
@@ -176,7 +190,7 @@
 |---------|--------|---------|------|
 | Security Checklist | 14/14 pass | /14 | ⏳ |
 | Crypto round-trip | 100% hash match | /7 | ⏳ |
-| Integration tests | ≥18/20 pass | /20 | ⏳ |
+| Integration tests | 9/9 pass (E01-E09) | /9 | ⏳ |
 | Build | 0 error | | ⏳ |
 | CRITICAL/HIGH bugs còn open | 0 | | ⏳ |
 | Text tiếng Việt | 100% | | ⏳ |

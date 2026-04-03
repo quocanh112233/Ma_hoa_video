@@ -212,6 +212,7 @@ import AESPage from './pages/AESPage';
 import RSAPage from './pages/RSAPage';
 import HybridPage from './pages/HybridPage';
 import SignaturePage from './pages/SignaturePage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -223,6 +224,7 @@ function App() {
         <Route path="/rsa" element={<RSAPage />} />
         <Route path="/hybrid" element={<HybridPage />} />
         <Route path="/signature" element={<SignaturePage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
@@ -230,6 +232,8 @@ function App() {
 
 export default App;
 ```
+
+> **📝 `NotFoundPage.tsx`:** Trang 404 hiển thị khi truy cập URL không tồn tại. Nội dung: tiêu đề "404 — Trang không tìm thấy", nút quay về trang chủ. Text toàn bộ tiếng Việt.
 
 #### `components/Navbar.tsx`
 

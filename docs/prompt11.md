@@ -143,6 +143,8 @@ NGƯỜI NHẬN (Receiver):
   - `done` (xanh lá + ✅)
   - `error` (đỏ + ❌)
 
+> **⚠️ Lưu ý quan trọng:** Timeline 4 bước là **visual simulation** (hiển thị tuần tự bằng `setTimeout`). Frontend chỉ gọi **1 API call** duy nhất (`POST /api/signature/sign-encrypt`). Backend KHÔNG gửi progress từng bước. Mục đích: giáo dục người dùng hiểu quy trình nội bộ đang diễn ra.
+
 - Kết quả: download `.signed.enc` + hiện SHA-256 hash
 
 ### Tab Giải mã & Xác minh (DecryptVerifyPanel)

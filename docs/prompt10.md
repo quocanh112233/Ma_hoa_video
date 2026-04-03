@@ -8,7 +8,7 @@
 - **Output:** File `.signed.enc` (ký + mã hóa) hoặc video gốc + kết quả xác minh
 - **Files to create:** `routers/signature.py`, `services/signature_service.py`, `schemas/signature_schema.py`
 - **Key constraint:** RSA-PSS cho chữ ký, Hybrid cho mã hóa (AES+RSA), xác minh hash SHA-256
-- **Definition of Done:** 4 endpoints hoạt động + 13 test cases pass + Security Checklist S01-S05,S05-S11 pass
+- **Definition of Done:** 4 endpoints hoạt động + 13 test cases pass + Security Checklist S01-S11 pass
 
 ---
 
@@ -170,35 +170,43 @@ Bước 4: So sánh actual_hash với expected_hash từ metadata
   - `enc_file`: UploadFile (file `.signed.enc`)
   - `receiver_private_key_pem`: str (để giải mã)
   - `sender_public_key_pem`: str (để xác minh chữ ký)
-- **Response:** JSON + StreamingResponse
-  ```json
-  {
-    "signature_valid": true,
-    "expected_hash": "abc123...",
-    "actual_hash": "abc123...",
-    "message": "✅ Chữ ký hợp lệ. Video chưa bị sửa đổi.",
-    "download_url": "/api/signature/download/<session_id>"
-  }
+- **Response:** `StreamingResponse` file video gốc (giống pattern AES/RSA/Hybrid)
+  - Header: `Content-Disposition: attachment; filename="<original_filename>"`
+  - Header: `X-Signature-Valid: true` hoặc `false`
+  - Header: `X-Video-SHA256-Expected: <hex>` (hash từ metadata file .signed.enc)
+  - Header: `X-Video-SHA256-Actual: <hex>` (hash tính từ video sau decrypt)
+  - Header: `X-Signature-Message: <message tiếng Việt URL-encoded>`
+  > **Lưu ý:** Cho phép download video NGAY CẢ KHI chữ ký không hợp lệ. Frontend đọc headers để quyết định hiển thị ✅ hay ❌.
+  >
+  > Pattern này nhất quán với toàn bộ dự án (không cần session, không cần DB, không cần endpoint `/download/<session_id>`).
+  
+  **Ví dụ response headers khi hợp lệ:**
   ```
-  - Nếu chữ ký không hợp lệ:
-  ```json
-  {
-    "signature_valid": false,
-    "expected_hash": "abc123...",
-    "actual_hash": "def456...",
-    "message": "❌ Chữ ký KHÔNG hợp lệ. Video có thể đã bị giả mạo!",
-    "download_url": "/api/signature/download/<session_id>"
-  }
+  X-Signature-Valid: true
+  X-Video-SHA256-Expected: abc123def456...
+  X-Video-SHA256-Actual: abc123def456...
+  X-Signature-Message: %E2%9C%85%20Ch%E1%BB%AF%20k%C3%BD%20h%E1%BB%A3p%20l%E1%BB%87
   ```
-  > Lưu ý: Cho phép download video NGAY CẢ KHI chữ ký không hợp lệ (kèm cảnh báo), để user kiểm tra.
+  
+  **Ví dụ response headers khi KHÔNG hợp lệ:**
+  ```
+  X-Signature-Valid: false
+  X-Video-SHA256-Expected: abc123def456...
+  X-Video-SHA256-Actual: 789xyz...
+  X-Signature-Message: %E2%9D%8C%20Ch%E1%BB%AF%20k%C3%BD%20KH%C3%94NG%20h%E1%BB%A3p%20l%E1%BB%87
+  ```
+
+- **Xử lý lỗi RSA decrypt:**
+  - Sai receiver private key → **HTTP 400** `"Private key người nhận không đúng"` (KHÔNG trả video)
+
 - **Logic:**
   1. Parse header JSON → lấy signature info
-  2. RSA decrypt AES key bằng receiver private key
-  3. AES-GCM decrypt video chunks
+  2. RSA decrypt AES key bằng receiver private key (fail → 400)
+  3. AES-GCM decrypt video chunks → stream vào temp hoặc buffer
   4. Tính SHA-256 hash video decrypt
   5. RSA-PSS verify signature bằng sender public key
   6. So sánh actual hash vs expected hash
-  7. Lưu video tạm để download (hoặc stream trực tiếp)
+  7. Stream video decrypt về client kèm verify result trong headers
 
 ### `POST /api/signature/sign-only`
 

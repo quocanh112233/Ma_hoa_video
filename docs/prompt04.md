@@ -47,6 +47,8 @@ Implement 3 endpoint AES:
 2. `POST /api/aes/encrypt` — mã hóa video → file `.enc`
 3. `POST /api/aes/decrypt` — giải mã file `.enc` → video gốc
 
+> **📝 Ghi chú:** Dùng `GET` cho `generate-key` vì endpoint này **idempotent về chức năng** (mỗi lần gọi sinh key mới, không tạo/thay đổi resource trên server). `POST` cũng hợp lý theo REST convention, nhưng `GET` đơn giản hơn cho mục đích demo và giáo dục.
+
 ---
 
 ## 📁 File cần tạo/chỉnh sửa
